@@ -34,7 +34,7 @@
         }
 
         .top-bar {
-            display: flex;
+            display: none;
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 flex-shrink: 0;
             border-bottom: 1px solid #999;
         }
@@ -76,9 +76,9 @@
         }
 
         .row-label {
-            width: 2rem;
-            flex-shrink: 0;
-            display: flex;
+            width: 0;
+            flex-shrink: 1;
+            display: none;
             align-items: center;
             justify-content: center;
             font-size: min(1.2vw, 1.2vh);
@@ -106,6 +106,24 @@
             background: #f5f5f5;
         }
 
+        .coord-tooltip {
+            position: fixed;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            pointer-events: none;
+            z-index: 1000;
+            transform: translate(-50%, -100%);
+            margin-top: -6px;
+            white-space: nowrap;
+        }
+
+        .coord-tooltip.hidden {
+            visibility: hidden;
+        }
+
         .rows {
             position: relative;
         }
@@ -113,7 +131,7 @@
         .ad-overlay {
             position: absolute;
             top: 0;
-            left: 2rem;
+            left: 0;
             z-index: 1;
             right: 0;
             bottom: 0;
@@ -210,11 +228,11 @@
         }
 
         @media (max-width: 768px) {
-            .ad-overlay { left: 1.75rem; }
+            .ad-overlay { left: 0; }
         }
 
         @media (max-width: 480px) {
-            .ad-overlay { left: 1.5rem; }
+            .ad-overlay { left: 0; }
         }
 
         /* Responsive: mobile - full screen, same flex layout as desktop */
@@ -267,6 +285,8 @@
         </div>
     </div>
 
+    <div class="coord-tooltip hidden" id="coordTooltip"></div>
+
     <div class="links-modal" id="linksModal">
         <div class="links-modal-content">
             <button class="links-modal-close" id="modalClose" aria-label="Cerrar">&times;</button>
@@ -310,6 +330,26 @@
                 cell.className = 'cell';
                 cell.dataset.row = r;
                 cell.dataset.col = c;
+                cell.addEventListener('mouseenter', (e) => {
+                    const row = parseInt(cell.dataset.row, 10);
+                    const col = parseInt(cell.dataset.col, 10);
+                    const coord = `(${getRowLabel(row)}, ${col + 1})`;
+                    const tip = document.getElementById('coordTooltip');
+                    tip.textContent = coord;
+                    tip.classList.remove('hidden');
+                    tip.style.left = e.clientX + 'px';
+                    tip.style.top = e.clientY + 'px';
+                });
+                cell.addEventListener('mousemove', (e) => {
+                    const tip = document.getElementById('coordTooltip');
+                    if (!tip.classList.contains('hidden')) {
+                        tip.style.left = e.clientX + 'px';
+                        tip.style.top = e.clientY + 'px';
+                    }
+                });
+                cell.addEventListener('mouseleave', () => {
+                    document.getElementById('coordTooltip').classList.add('hidden');
+                });
                 gridRow.appendChild(cell);
             }
             mainRow.appendChild(gridRow);
