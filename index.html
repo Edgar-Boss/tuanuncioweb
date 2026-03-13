@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>4×4 Pixel Grid (v3)</title>
+    <title>Anunciate Aqui</title>
     <style>
         * {
             margin: 0;
@@ -310,9 +310,6 @@
                 cell.className = 'cell';
                 cell.dataset.row = r;
                 cell.dataset.col = c;
-                cell.addEventListener('click', () => {
-                    cell.style.background = cell.style.background === 'black' ? '#fff' : 'black';
-                });
                 gridRow.appendChild(cell);
             }
             mainRow.appendChild(gridRow);
